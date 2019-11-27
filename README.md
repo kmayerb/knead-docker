@@ -27,7 +27,7 @@ WORK_DIR=s3://fh-pi-kublin-j-microbiome/scratch-delete30/nextflow/
 NXF_VER=19.10.0 nextflow \
     -c ~/nextflow-aws.config \
     run \
-    kmayerbl/knead-docker \
+    kmayerb/knead-docker \
         -r 0.0.1 \
         --batchfile $BATCHFILE \
         --output_folder $OUTPUT_FOLDER \
