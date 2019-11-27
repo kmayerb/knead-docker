@@ -16,7 +16,7 @@
 
 // location of the human decoy bowtie files to be unzipped and untared 
 
-params.human_decoy = s3://fh-pi-kublin-j-microbiome/read_only/REF/Homo_sapiens_hg37_and_human_contamination_Bowtie2_v0.1.tar.gz
+params.human_decoy = "s3://fh-pi-kublin-j-microbiome/read_only/REF/Homo_sapiens_hg37_and_human_contamination_Bowtie2_v0.1.tar.gz"
 
 // destination folder for all trimmed reads
 
