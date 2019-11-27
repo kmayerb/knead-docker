@@ -32,7 +32,7 @@ Channel.from(file(params.batchfile))
 
 // deal with .gz file a docker file
 process knead {
-	container "biobakery/kneaddata:0.7.2"
+	container "quay.io/kmayerb/docker-knead@sha256:392c79e403f06d0ee8b884ad63d6654484a8935726a8ff524fa29f03d991cfdb"
 	cpus 4
 	memory "32 GB"
 	errorStrategy "retry"
