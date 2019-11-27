@@ -20,7 +20,7 @@ params.human_decoy = s3://fh-pi-kublin-j-microbiome/read_only/REF/Homo_sapiens_h
 
 // destination folder for all trimmed reads
 
-params.pubdir_for_trimmedreads  = "s3://fh-pi-kublin-j-microbiome/read_only/CFTRIM/"
+params.output_folder  = "s3://fh-pi-kublin-j-microbiome/read_only/CFTRIMTEST/"
 
 
 Channel.from(file(params.batchfile))
@@ -37,7 +37,7 @@ process knead {
 	memory "32 GB"
 	errorStrategy "retry"
 
-	publishDir "${params.pubdir_for_trimmedreads}"
+	publishDir "${params.output_folder}"
 
 	input:
 	set sample_name, file(fastq1), file(fastq2) from kneaddata_ch
