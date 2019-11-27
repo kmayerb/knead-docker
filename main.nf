@@ -41,7 +41,7 @@ process knead {
 
 	input:
 	set sample_name, file(fastq1), file(fastq2) from kneaddata_ch
-	set file refdb_targz from file(param.human_decoy)
+	set file refdb_targz from file(params.human_decoy)
 
 	output:
 	set sample_name, file("${sample_name}.R1.kneaddata_paired_1.fastq"), file("${sample_name}.R1.kneaddata_paired_2.fastq") into next_ch
