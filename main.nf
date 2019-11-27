@@ -41,7 +41,7 @@ process knead {
 
 	input:
 	set sample_name, file(fastq1), file(fastq2) from kneaddata_ch
-	set file refdb_targz from file(params.human_decoy)
+	file refdb_targz from file(params.human_decoy)
 
 	output:
 	set sample_name, file("${sample_name}.R1.kneaddata_paired_1.fastq"), file("${sample_name}.R1.kneaddata_paired_2.fastq") into next_ch
@@ -52,7 +52,7 @@ process knead {
 	/ makes reference directory 
 	mkdir reference
 	/ unzips contents to reference instead of drupal
-	tar -zxf refdb_targz -C reference --strip-components 1
+	tar -zxf ${refdb_targz} -C reference --strip-components 1
 	/ runs kneaddata, including trimmomatic,
 	kneaddata --input ${fastq1} --input ${fastq2} -db reference/ --output ./
 	"""       
