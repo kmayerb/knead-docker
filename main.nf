@@ -50,6 +50,7 @@ process knead {
 
 	"""
 	/ makes reference directory 
+	apt-get update && apt-get install procps
 	mkdir reference
 	/ unzips contents to reference instead of drupal
 	tar -zxf ${refdb_targz} -C reference --strip-components 1
