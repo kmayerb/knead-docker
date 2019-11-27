@@ -14,7 +14,7 @@ C73PMACXX_7_AGGCAGAA_CTAAGCCT,s3://fh-pi-kublin-j-microbiome/read_only/CF/C73PMA
 ```
 
 ### Create a run.sh
-``` bash
+```bash
 #! bin/bash
 ml nextflow
 
@@ -27,7 +27,7 @@ WORK_DIR=s3://fh-pi-kublin-j-microbiome/scratch-delete30/nextflow/
 NXF_VER=19.10.0 nextflow \
     -c ~/nextflow-aws.config \
     run \
-    kmayerbl/knead \
+    kmayerbl/knead-docker \
         -r 0.0.1 \
         --batchfile $BATCHFILE \
         --output_folder $OUTPUT_FOLDER \
