@@ -56,9 +56,9 @@ NXF_VER=19.10.0 nextflow \
 ```
 
 
-These look fancy but they are means of passing parameters to the nf-script. --flag will be paramas.flag in main.nf.
+These look fancy but they are means of passing parameters to the nf-script. --flag will be passed to params.flag in the main.nf script.
 
-For instance **params.batchfiles** appears in the script in the definition of the first Channel:
+For instance **params.batchfiles** appears in the script in instantiation of the first Channel:
 
 ```nextflow
 Channel.from(file(params.batchfile))
@@ -67,7 +67,7 @@ Channel.from(file(params.batchfile))
           [sample.name, file(sample.fastq1), file(sample.fastq2)]}
           .set{ kneaddata_ch }
 ```
-and, for example, **params.output_folder** is pasesd to the publishDir setting within a process
+and, for a secodn example, **params.output_folder** is passed to the publishDir setting within a process to specify where to dump the outputs
 
 ```nextflow
 publishDir "${params.output_folder}"
