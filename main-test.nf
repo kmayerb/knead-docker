@@ -31,6 +31,6 @@ process knead {
 	echo ${fastq1}
 	mkdir reference
 	tar -zxf ${refdb_targz} -C reference --strip-components 1
-	kneaddata --input ${fastq1} --reference-db examples/demo_db --output ./
+	kneaddata --input ${fastq1} --reference-db reference/demo_db --output ./
 	"""       
 }
