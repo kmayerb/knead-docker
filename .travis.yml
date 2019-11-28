@@ -16,4 +16,4 @@ script:
   - echo 'export PATH="/home/travis/build/kmayerb/nf-mixcr:$PATH"' >> ~/.bashrc
   - source ~/.bashrc
   - nextflow -h
-  - nextflow main-test.nf
+  - nextflow main-test.nf -c nextflow.config
