@@ -4,7 +4,6 @@ python:
 jdk: openjdk8
 services:
 - docker
-- quay
 # command to install dependencies
 install:
   - sudo apt-get -qq update
@@ -13,7 +12,7 @@ install:
   - if [[ $TRAVIS_PYTHON_VERSION == '3.6' ]]; then travis_retry pip install -r requirements.txt; fi
 script:
   - echo "NOT READY TO ACTUALLY TEST ANYTHING EXCEPT DEPENDENCIES"
-  - echo 'export PATH="/home/travis/build/kmayerb/nf-mixcr:$PATH"' >> ~/.bashrc
+  - echo 'export PATH="/home/travis/build/kmayerb/docker-knead:$PATH"' >> ~/.bashrc
   - source ~/.bashrc
   - nextflow -h
-  - nextflow main-test.nf -c nextflow.config
+  - nextflow run main-test.nf -c nextflow.config
