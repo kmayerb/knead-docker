@@ -35,8 +35,7 @@ process knead {
 	container "quay.io/kmayerb/docker-knead@sha256:392c79e403f06d0ee8b884ad63d6654484a8935726a8ff524fa29f03d991cfdb"
 	cpus 2
 	memory "8 GB"
-	errorStrategy "retry"
-
+	
 	publishDir "${params.output_folder}"
 
 	input:
