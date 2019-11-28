@@ -16,4 +16,4 @@ script:
   - echo 'export PATH="/home/travis/build/kmayerb/nf-mixcr:$PATH"' >> ~/.bashrc
   - source ~/.bashrc
   - nextflow -h
-  - nextflow main-test.nf -with-docker 'quay.io/kmayerb/docker-knead@sha256:392c79e403f06d0ee8b884ad63d6654484a8935726a8ff524fa29f03d991cfdb'
+  - nextflow main-test.nf
