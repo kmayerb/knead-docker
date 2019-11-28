@@ -23,7 +23,7 @@ process knead {
 
 	output:
 	//set sample_name, file("${sample_name}.R1.fq.kneaddata_paired_1.fastq"), file("${sample_name}.R1.fq.kneaddata_paired_2.fastq") into next_ch
-	set sample_name, file("${sample_name}._kneaddata.fastq") into next_ch
+	set sample_name, file("${sample_name}_kneaddata.fastq") into next_ch
 	
 	afterScript "rm *"
 
