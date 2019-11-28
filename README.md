@@ -29,30 +29,6 @@ C73PMACXX_7_AGGCAGAA_CTAAGCCT,s3://fh-pi-lastname-f/../C73PMACXX_7_AGGCAGAA_CTAA
 
 Next you create a run script (run.sh). This defines some variables and makes the call to nextflow.
 
-These look fancy but they are means of passing parameters to the nf-script. --flag will be paramas.flag in main.nf.
-
-For instance **params.batchfiles** appears in the script in the definition of the first Channel:
-
-```nextflow
-Channel.from(file(params.batchfile))
-          .splitCsv(header: true, sep: ",")
-          .map { sample ->
-          [sample.name, file(sample.fastq1), file(sample.fastq2)]}
-          .set{ kneaddata_ch }
-```
-and, for example, **params.output_folder** is pasesd to the publishDir setting within a process
-
-```nextflow
-publishDir "${params.output_folder}"
-```
-
-1. BATCHFILE - the file specifying samples into the workflow
-2. OUTPUT_FOLDER - specified in your workflow as params.output_folder which is passed to publishDir within a process.
-This will likely be an S3 Bucket + prefix. 
-3. PROJECT - the name of you project. Not used here except for naming hte report file
-4. WORK_DIR - the place where all of nextflows termporary work files are stored. This baloons. So should probably be dumped within a set amount of time to minimize the bucket's ecological footprint.
-
-'''
 
 ### Create a run.sh
 ```bash
@@ -79,3 +55,28 @@ NXF_VER=19.10.0 nextflow \
         -resume
 ```
 
+
+These look fancy but they are means of passing parameters to the nf-script. --flag will be paramas.flag in main.nf.
+
+For instance **params.batchfiles** appears in the script in the definition of the first Channel:
+
+```nextflow
+Channel.from(file(params.batchfile))
+          .splitCsv(header: true, sep: ",")
+          .map { sample ->
+          [sample.name, file(sample.fastq1), file(sample.fastq2)]}
+          .set{ kneaddata_ch }
+```
+and, for example, **params.output_folder** is pasesd to the publishDir setting within a process
+
+```nextflow
+publishDir "${params.output_folder}"
+```
+
+1. BATCHFILE - the file specifying samples into the workflow
+2. OUTPUT_FOLDER - specified in your workflow as params.output_folder which is passed to publishDir within a process.
+This will likely be an S3 Bucket + prefix. 
+3. PROJECT - the name of you project. Not used here except for naming hte report file
+4. WORK_DIR - the place where all of nextflows termporary work files are stored. This baloons. So should probably be dumped within a set amount of time to minimize the bucket's ecological footprint.
+
+'''
