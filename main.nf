@@ -43,7 +43,7 @@ process knead {
 	file refdb_targz from file(params.human_decoy)
 
 	output:
-	set sample_name, file("results/${sample_name}.R1.fq_kneaddata_paired_1.fastq"), file("results/${sample_name}.R1.fq_kneaddata_paired_2.fastq") into next_ch
+	set sample_name, file("${sample_name}.R1.fq_kneaddata_paired_1.fastq.tar.gz"), file("${sample_name}.R1.fq_kneaddata_paired_2.fastq.tar.gz") into next_ch
 
 	afterScript "rm *"
 
@@ -52,6 +52,8 @@ process knead {
 	mkdir results
 	tar -zxf ${refdb_targz} -C reference --strip-components 1
 	kneaddata --input ${fastq1} --input ${fastq2} -db reference/ --output results
+	tar -czvf ${sample_name}.R1.fq_kneaddata_paired_1.fastq.tar.gz --directory=./results/ ${sample_name}.R1.fq_kneaddata_paired_1.fastq
+	tar -czvf ${sample_name}.R1.fq_kneaddata_paired_2.fastq.tar.gz --directory=./results/ ${sample_name}.R1.fq_kneaddata_paired_2.fastq
 	"""       
 }
 
