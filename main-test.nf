@@ -20,7 +20,7 @@ process knead {
 	file refdb_targz from file(params.tar)
 
 	output:
-	set sample_name, file("${sample_name}_kneaddata.fastq.tar.gz") into next_ch
+	set sample_name, file("results/${sample_name}_kneaddata.fastq") into next_ch
 	
 	afterScript "rm *"
 
@@ -30,8 +30,25 @@ process knead {
 	mkdir results
 	tar -zxf ${refdb_targz} -C reference --strip-components 1
 	kneaddata --input ${fastq1} --reference-db reference/demo_db --output results
-	tar -czvf ${sample_name}_kneaddata.fastq.tar.gz --directory=./results/ ${sample_name}_kneaddata.fastq
 	"""       
+}
+
+process comp {
+	container ubuntu:20.04
+
+	publishDir "./"
+
+	input:
+	set sample_name, file(fastq_trim) from next_ch
+
+	output:
+	set sample_name, file("${sample_name}_kneaddata.fastq.tar.gz") into comp_ch
+
+	afterScript "rm *"
+
+	"""
+	tar -czvf ${sample_name}_kneaddata.fastq.tar.gz ${fastq_trim}
+	"""
 }
 
 
