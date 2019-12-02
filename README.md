@@ -1,11 +1,14 @@
 # knead-docker
 
+[![Build Status](https://travis-ci.com/kmayerb/knead-docker.svg?branch=master)](https://travis-ci.com/kmayerb/knead-docker)
+
 ### Modifying your Dockerfile
 
 A slight modification was needed to the Docker image provided at DokcerHub biobakery/kneaddata:0.7.2 from the the Huttenhower Lab. 
+
 Nexflow requires some basic tools, namely ps, that were not included on the base image.
 
-A Dockerfile included the one-line modification. The docker image is built and hosted using quay.io (https://quay.io/repository/kmayerb/docker-knead)
+A Dockerfile in this repor includes the one-line modification. The docker image is built and hosted using quay.io (https://quay.io/repository/kmayerb/docker-knead)
 
 
 ```
@@ -14,21 +17,24 @@ quay.io/kmayerb/docker-knead@sha256:392c79e403f06d0ee8b884ad63d6654484a8935726a8
 
 ### Running Nextflow 
 
-Start with a nextflow workflow. It lives in it's own github repo in this case kmayerb/docker-knead/
+Start with a nextflow workflow mainted in a github repo (in this case kmayerb/docker-knead/)
 
-The file main.nf is the default workflow that is run in the process described below.
+The file main.nf is the default workflow that is run in the process described below. The file main-test.nf is 
+a toy version for trying things on travis-CI.
+
 
 ### Create a batchfile.csv
 
-Next you have a batchfile CSV specifying inputs to the workflow. 
+Next create a batchfile CSV specifying inputs to the workflow. 
 
 ```
 name,fastq1,fastq2
 C73PMACXX_7_AGGCAGAA_CTAAGCCT,s3://fh-pi-lastname-f/../C73PMACXX_7_AGGCAGAA_CTAAGCCT.R1.fq.fastq.gz, s3://fh-pi-lastname-f/../C73PMACXX_7_AGGCAGAA_CTAAGCCT.R2.fq.fastq.gz
 ```
 
-Next you create a run script (run.sh). This defines some variables and makes the call to nextflow.
 
+Next you create a run script (run.sh). This defines some variables and makes the call to nextflow.  This will be run from 
+within the rhinos cluster and can be saved in a project folder associated with the project.
 
 ### Create a run.sh
 ```bash
@@ -55,8 +61,7 @@ NXF_VER=19.10.0 nextflow \
         -resume
 ```
 
-
-These look fancy but they are means of passing parameters to the nf-script. --flag will be passed to params.flag in the main.nf script.
+The run.sh is a means of passing parameters to the nf-script. --flag will be passed to params.flag in the main.nf script.
 
 For instance **params.batchfiles** appears in the script in instantiation of the first Channel:
 
@@ -79,4 +84,3 @@ This will likely be an S3 Bucket + prefix.
 3. PROJECT - the name of you project. Not used here except for naming hte report file
 4. WORK_DIR - the place where all of nextflows termporary work files are stored. This baloons. So should probably be dumped within a set amount of time to minimize the bucket's ecological footprint.
 
-'''
