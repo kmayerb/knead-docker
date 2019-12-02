@@ -43,7 +43,7 @@ process knead {
 	file refdb_targz from file(params.human_decoy)
 
 	output:
-	set sample_name, file("results/${sample_name}.R1.fq.kneaddata_paired_1.fastq"), file("results/${sample_name}.R1.fq.kneaddata_paired_2.fastq") into next_ch
+	set sample_name, file("results/${sample_name}.R1.fq_kneaddata_paired_1.fastq"), file("results/${sample_name}.R1.fq_kneaddata_paired_2.fastq") into next_ch
 
 	afterScript "rm *"
 
