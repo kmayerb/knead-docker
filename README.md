@@ -84,3 +84,14 @@ This will likely be an S3 Bucket + prefix.
 3. PROJECT - the name of you project. Not used here except for naming hte report file
 4. WORK_DIR - the place where all of nextflows termporary work files are stored. This baloons. So should probably be dumped within a set amount of time to minimize the bucket's ecological footprint.
 
+
+### Quick Testing in a container
+
+probably the fastest way to troubleshoot is to work in a container. (mounting a volume can provide access to input fils)
+```
+docker run -v ${HOME}/active-testing/knead-docker/examples/:/root -it quay.io/kmayerb/docker-knead@sha256:392c79e403f06d0ee8b884ad63d6654484a8935726a8ff524fa29f03d991cfdb
+mkdir reference
+mkdir results
+tar -zxf root/demo.tar.gz -C reference --strip-components 1
+kneaddata --input ref
+```
