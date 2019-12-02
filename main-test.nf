@@ -34,7 +34,7 @@ process knead {
 }
 
 process comp {
-	container ubuntu:20.04
+	container "ubuntu:20.04"
 
 	publishDir "./"
 
