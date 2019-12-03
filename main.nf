@@ -43,7 +43,7 @@ process knead {
 	file refdb_targz from file(params.human_decoy)
 
 	output:
-	set sample_name, file("${sample_name}.R1.fq_kneaddata_paired_1.fastq.tar.gz"), file("${sample_name}.R1.fq_kneaddata_paired_2.fastq.tar.gz") into next_ch
+	set sample_name, file("results/${sample_name}.R1.fq_kneaddata_paired_1.fastq"), file("results/${sample_name}.R1.fq_kneaddata_paired_2.fastq") into next_ch
 
 	afterScript "rm *"
 
@@ -52,12 +52,32 @@ process knead {
 	mkdir results
 	tar -zxf ${refdb_targz} -C reference --strip-components 1
 	kneaddata --input ${fastq1} --input ${fastq2} -db reference/ --output results
-	tar -czvf ${sample_name}.R1.fq_kneaddata_paired_1.fastq.tar.gz --directory=./results/ ${sample_name}.R1.fq_kneaddata_paired_1.fastq
-	tar -czvf ${sample_name}.R1.fq_kneaddata_paired_2.fastq.tar.gz --directory=./results/ ${sample_name}.R1.fq_kneaddata_paired_2.fastq
 	"""       
 }
 
 
+process comp {
+	container "ubuntu:20.04"	
 
+	cpus 1
+	memory "4 GB"
 
+	publishDir params.output_folder
+
+	input:
+	set sample_name, file(fastq1_trim), file(fastq2_trim) from next_ch
+
+	output:
+	set sample_name, file("results/blah.txt"), file("results/${sample_name}.R1.fq_kneaddata_paired_1.fastq.tar.gz"), file("results/${sample_name}.R1.fq_kneaddata_paired_2.fastq.tar.gz") into comp_ch
+
+	afterScript "rm *"
+
+	"""
+	mkdir results
+	echo ${fastq1_trim} >> results/blah.txt
+	echo ${fastq2_trim} >> results/blah.txt
+	tar -czvf results/${sample_name}.R1.fq_kneaddata_paired_1.fastq.tar.gz ${fastq1_trim} 
+	tar -czvf results/${sample_name}.R1.fq_kneaddata_paired_2.fastq.tar.gz ${fastq2_trim} 
+	"""
+}
 
