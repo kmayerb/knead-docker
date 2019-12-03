@@ -13,7 +13,7 @@ Channel.from(file(params.batchfile))
 process knead {
 	container "quay.io/kmayerb/docker-knead@sha256:392c79e403f06d0ee8b884ad63d6654484a8935726a8ff524fa29f03d991cfdb"
 	
-	publishDir "./" 
+	publishDir params.output_folder
 
 	input:
 	set sample_name, file(fastq1), file(fastq2) from kneaddata_ch
@@ -36,20 +36,24 @@ process knead {
 process comp {
 	container "ubuntu:20.04"
 
-	publishDir "./"
+	publishDir params.output_folder
 
 	input:
 	set sample_name, file(fastq_trim) from next_ch
 
 	output:
-	set sample_name, file("${sample_name}_kneaddata.fastq.tar.gz") into comp_ch
+	set sample_name, file("results/blah.txt"), file("results/${sample_name}_kneaddata.fastq.tar.gz") into comp_ch
 
 	afterScript "rm *"
 
 	"""
-	tar -czvf ${sample_name}_kneaddata.fastq.tar.gz ${fastq_trim}
+	mkdir results
+	echo ${fastq_trim} >> results/blah.txt
+	tar -czvf results/${sample_name}_kneaddata.fastq.tar.gz ${fastq_trim} 
 	"""
 }
+
+
 
 
 
