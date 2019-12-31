@@ -1,2 +1,3 @@
 name,fastq1,fastq2
-demo,examples/demo.fastq,examples/demo1.fastq
+demo,examples/dm50.R1.fq,examples/dm50.R2.fq
+demo2,examples/s100.R1.fq,examples/s100.R2.fq
