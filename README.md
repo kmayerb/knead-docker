@@ -2,22 +2,49 @@
 
 [![Build Status](https://travis-ci.com/kmayerb/knead-docker.svg?branch=master)](https://travis-ci.com/kmayerb/knead-docker)
 
-### Modifying your Dockerfile
+### Modifying your Dockerfiles
 
-A slight modification was needed to the Docker image provided at DokcerHub biobakery/kneaddata:0.7.2 from the the Huttenhower Lab. 
+### KNEADDATA
 
-Nexflow requires some basic tools, namely ps, that were not included on the base image.
+A slight modification was needed to the Docker image provided at DokcerHub biobakery/kneaddata:0.7.2 from the the Huttenhower Lab. Nexflow requires some basic tools when run on AWS, namely ps, that were not included on the base image.
 
-A Dockerfile in this repor includes the one-line modification. The docker image is built and hosted using quay.io (https://quay.io/repository/kmayerb/docker-knead)
+[Dockerfile] (https://github.com/kmayerb/knead-docker/blob/master/Dockerfile)
 
+A Dockerfile in this repo includes the one-line modification to add ps. The docker image is built and hosted using quay.io (https://quay.io/repository/kmayerb/docker-knead) 
 
 ```
 quay.io/kmayerb/docker-knead@sha256:392c79e403f06d0ee8b884ad63d6654484a8935726a8ff524fa29f03d991cfdb
 ```
 
+### FASTQC 
+
+mitochondria {[Dockerfile](https://github.com/kmayerb/mitochondria/commit/31d03c3586434f5545cba106b0efcc8885b5f2c4)} and {[quay.io](https://quay.io/repository/kmayerb/mitochondria?tab=tags)}
+
+```
+quay.io/kmayerb/mitochondria:0.0.1
+quay.io/kmayerb/mitochondria@sha256:54cd567a2eccc82a7134dfdbfde57e7d8dfe205a0ba8f62312ced8ff517f43bf 
+```
+tag: 0.0.1
+
+### MULTIQC
+
+A Dockerfile existed but wasn't tagged to the latest stable release. I forked the official multiqc repo, created a v1.8nf branch, rewound that branch to the commit associated with 1.8 release. And built a docker container from that point. The only modification to the Docker container was to remove the entrypoint.
+
+Multiqc {[Dockerfile](https://github.com/kmayerb/MultiQC/blob/v1.8nf/Dockerfile)} and {[quay.io](https://quay.io/repository/kmayerb/nf-multiqc?tab=tags)}
+```
+quay.io/kmayerb/nf-multiqc:v1.8nf
+quay.io/kmayerb/nf-multiqc@sha256:964402c37bc87b1ddba1e757c6675a6df7c8009c85660c8d654688699eed5f10
+```
+tag: v.1.8nf
+
+
+```Dockerfile
+
+```
+
 ### Running Nextflow 
 
-Start with a nextflow workflow mainted in a github repo (in this case kmayerb/docker-knead/)
+Start with a nextflow workflow hosted in a GitHub repo (in this case kmayerb/docker-knead/)
 
 The file main.nf is the default workflow that is run in the process described below. The file main-test.nf is 
 a toy version for trying things on travis-CI.
@@ -42,23 +69,23 @@ within the rhinos cluster and can be saved in a project folder associated with t
 ml nextflow
 
 # Reference database
-BATCHFILE=trial_nextflow_cf_batch.csv
-OUTPUT_FOLDER=s3://fh-pi-kublin-j-microbiome/read_only/CFTRIMTEST/
-PROJECT=trimtest
+BATCHFILE=trial_econ_nextflow_cf_batch.csv
+OUTPUT_FOLDER=s3://fh-pi-kublin-j-microbiome/CF/trim_trial/2019_12_30_trim_trial/
+PROJECT=trim_test
 WORK_DIR=s3://fh-pi-kublin-j-microbiome/scratch-delete30/nextflow/
 
 NXF_VER=19.10.0 nextflow \
-    -c ~/nextflow-aws.config \
+    -c nextflow-aws-econ.config \
     run \
     kmayerb/knead-docker \
-        -r 0.0.1 \
+        -r 0.1.8\
         --batchfile $BATCHFILE \
         --output_folder $OUTPUT_FOLDER \
         --output_prefix $PROJECT \
         -with-report $PROJECT.html \
         -work-dir $WORK_DIR \
         -with-tower \
-        -resume
+	-resume
 ```
 
 The run.sh is a means of passing parameters to the nf-script. --flag will be passed to params.flag in the main.nf script.
@@ -93,5 +120,4 @@ docker run -v ${HOME}/active-testing/knead-docker/examples/:/root -it quay.io/km
 mkdir reference
 mkdir results
 tar -zxf root/demo.tar.gz -C reference --strip-components 1
-kneaddata --input ref
 ```
