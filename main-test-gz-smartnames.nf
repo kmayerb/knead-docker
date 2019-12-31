@@ -157,8 +157,8 @@ process compress {
 process fastqc_on_raw_files {
 	tag "FASTQC ON RAW INPUT .fq FILES"
 
-	container 'quay.io/kmayerb/mitochondria@sha256:d48892f367b217116874ca18e5f5fa602413d6a6030bccd02228f2a4153a3067'
-
+	container 'quay.io/kmayerb/mitochondria@sha256:54cd567a2eccc82a7134dfdbfde57e7d8dfe205a0ba8f62312ced8ff517f43bf'
+	
 	publishDir params.output_folder
 
 	input:
@@ -180,8 +180,8 @@ process fastqc_on_trimmed_files {
 
 	tag "FASTQC ON POST KNEADDATA .fq FILES"
 
-	container 'quay.io/kmayerb/mitochondria@sha256:d48892f367b217116874ca18e5f5fa602413d6a6030bccd02228f2a4153a3067'
-
+	container 'quay.io/kmayerb/mitochondria@sha256:54cd567a2eccc82a7134dfdbfde57e7d8dfe205a0ba8f62312ced8ff517f43bf'
+	
 	publishDir params.output_folder
 
 	input:
@@ -208,14 +208,14 @@ process multiqc {
 	tag "Pre-Trimming MULTIQC report generation"
 
 	input:
-    file('fastqc/*') from raw_fastqc_R1.mix(raw_fastqc_R2).mix(postknead_fastqc_R1).mix(postknead_fastqc_R2).collect()
+	file('fastqc/*') from raw_fastqc_R1.mix(raw_fastqc_R2).mix(postknead_fastqc_R1).mix(postknead_fastqc_R2).collect()
 
-    output:
-    file('pre_multiqc_report_raw.html')
+	output:
+	file('pre_multiqc_report_raw.html')
 
-    script:
-    """
-    multiqc . -o ./ -n pre_multiqc_report_raw.html -m fastqc
-    """
+	script:
+	"""
+	multiqc . -o ./ -n pre_multiqc_report_raw.html -m fastqc
+	"""
 
 }
