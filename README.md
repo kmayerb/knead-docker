@@ -8,9 +8,10 @@
 
 A slight modification was needed to the Docker image provided at DokcerHub biobakery/kneaddata:0.7.2 from the the Huttenhower Lab. Nexflow requires some basic tools when run on AWS, namely ps, that were not included on the base image.
 
-[Dockerfile] (https://github.com/kmayerb/knead-docker/blob/master/Dockerfile)
 
-A Dockerfile in this repo includes the one-line modification to add ps. The docker image is built and hosted using quay.io (https://quay.io/repository/kmayerb/docker-knead) 
+
+A Dockerfile in this repo includes the one-line modification to add ps. The docker image is built and hosted using quay.io.
+{[Dockerfile](https://github.com/kmayerb/knead-docker/blob/master/Dockerfile)} and {[quay.io](https://quay.io/repository/kmayerb/docker-knead?tab=tags)}
 
 ```
 quay.io/kmayerb/docker-knead@sha256:392c79e403f06d0ee8b884ad63d6654484a8935726a8ff524fa29f03d991cfdb
