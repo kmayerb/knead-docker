@@ -3,7 +3,6 @@
 // [channel] designates as channel
 // {process} designates a process
 
-
 // PROCESSES:
 	// {knead}
 	// {compress}
@@ -14,7 +13,7 @@
 // CHANNELS:
 	// [kneaddata_channel]
 	// [post_knead_channel]
-	// [post_knead_channel_copy]
+	// [post_knead_channel_publication]
 	// [postknead_fastqc_R1]
 	// [postknead_fastqc_R2]
 	// [raw_reads_to_fastqc_channel]
@@ -75,7 +74,7 @@ process knead {
 
 	container "quay.io/kmayerb/docker-knead@sha256:392c79e403f06d0ee8b884ad63d6654484a8935726a8ff524fa29f03d991cfdb"
 	
-	publishDir params.output_folder
+	//publishDir params.output_folder
 
 	input:
 	set sample_name, file(fastq1), file(fastq2) from kneaddata_channel
@@ -83,14 +82,15 @@ process knead {
 
 	output:
 	set sample_name,\
-	file("results/${fastq1.getBaseName()}.kneaddata_paired.fq"),\
-	file("results/${fastq2.getBaseName()}.kneaddata_paired.fq") into post_knead_channel
+	file("trimmed/${sample_name}.R1.kneaddata_paired.fq"),\
+	file("trimmed/${sample_name}.R2.kneaddata_paired.fq") into post_knead_channel
 
 	set sample_name,\
-	file("results/${fastq1.getBaseName()}.kneaddata_paired.fq"),\
-	file("results/${fastq2.getBaseName()}.kneaddata_paired.fq") into post_knead_channel_copy
-	
-	file("results/peak.txt") into nowhere
+	file("trimmed/${sample_name}.R1.kneaddata_paired.fq"),\
+	file("trimmed/${sample_name}.R2.kneaddata_paired.fq"),\
+	file("trimmed/${sample_name}.R1.kneaddata_unmatched.fq"),\
+	file("trimmed/${sample_name}.R2.kneaddata_unmatched.fq"),\
+	file("trimmed/${sample_name}.kneaddata.log") into post_knead_channel_publication
 	
 	afterScript "rm *"
 
@@ -99,20 +99,23 @@ process knead {
 	// untar/unzip the contents of refdb_targz bowtie database to reference folder
 	// run kneaddata
 	// kneaddata PE produces two files name.R1._kneadata_paired_1.fastq, name.R1._kneadata_paired_2.fastq
-	// RENAME: name.R1._kneadata_paired_1.fastq -> name.R1.kneadata_paired.fastq
-	// RENAME: name.R2._kneadata_paired_2.fastq -> name.R2.kneadata_paired.fastq
+	// RENAME: SimpleName.R1.fq_kneadata_paired_1.fastq -> sample_name.R1.kneadata_paired.fastq
+	// RENAME: SimpleName.R2.fq_kneadata_paired_2.fastq -> sample_name..R2.kneadata_paired.fastq
 	script:
 	"""
 	mkdir reference
-	mkdir results
+	mkdir trimmed
 	tar -zxf ${refdb_targz} -C reference --strip-components 1
-	kneaddata --input ${fastq1} --input ${fastq2} --reference-db reference/demo_db --output results
-	ls -la results | more > results/peak.txt
-	mv results/${fastq1.getBaseName()}_kneaddata_paired_1.fastq results/${fastq1.getBaseName()}.kneaddata_paired.fq
-	mv results/${fastq1.getBaseName()}_kneaddata_paired_2.fastq results/${fastq2.getBaseName()}.kneaddata_paired.fq
+	kneaddata --input ${fastq1} --input ${fastq2} --reference-db reference/demo_db --output trimmed
+	mv trimmed/${fastq1.getSimpleName()}.R1.fq_kneaddata_paired_1.fastq trimmed/${sample_name}.R1.kneaddata_paired.fq
+	mv trimmed/${fastq1.getSimpleName()}.R1.fq_kneaddata_paired_2.fastq trimmed/${sample_name}.R2.kneaddata_paired.fq
+	mv trimmed/${fastq1.getSimpleName()}.R1.fq_kneaddata_unmatched_1.fastq trimmed/${sample_name}.R1.kneaddata_unmatched.fq
+	mv trimmed/${fastq1.getSimpleName()}.R1.fq_kneaddata_unmatched_2.fastq trimmed/${sample_name}.R2.kneaddata_unmatched.fq
+	mv trimmed/${fastq1.getSimpleName()}.R1.fq_kneaddata.log trimmed/${sample_name}.kneaddata.log
 	"""       
 }
 
+//s100.R1.fq_kneaddata_paired_1.fastq
 
 process compress {
 	// tar and zip the kneaded files
@@ -122,18 +125,32 @@ process compress {
 	publishDir params.output_folder
 
 	input:
-	set sample_name, file(fastq1_kneaded), file(fastq2_kneaded) from post_knead_channel_copy
+	set sample_name,\
+	file(fastq1_kneaded_pe),\
+	file(fastq2_kneaded_pe),\
+	file(fastq1_kneaded_un),\
+	file(fastq2_kneaded_un),\
+	file(knead_log) from post_knead_channel_publication
 
 	output:
-	set sample_name, file("results/${fastq1_kneaded.getBaseName()}.tar.gz"), file("results/${fastq2_kneaded.getBaseName()}.tar.gz") into compressed_channel
+	set sample_name,\
+	file("trimmed/${sample_name}.R1.knead_paired.gz"),\
+	file("trimmed/${sample_name}.R2.knead_paired.gz"),\
+	file("trimmed/${sample_name}.R1.knead_unmatched.gz"),\
+	file("trimmed/${sample_name}.R2.knead_unmatched.gz"),\
+	file("trimmed_logs/${sample_name}.kneaddata.log") into compressed_channel
 
 	afterScript "rm *"
 
 	script:
 	"""
-	mkdir results
-	tar -czvf results/${fastq1_kneaded.getBaseName()}.tar.gz ${fastq1_kneaded}
-	tar -czvf results/${fastq2_kneaded.getBaseName()}.tar.gz ${fastq2_kneaded}
+	mkdir trimmed
+	gzip -cvf ${fastq1_kneaded_pe} > trimmed/${sample_name}.R1.knead_paired.gz 
+	gzip -cvf ${fastq2_kneaded_pe} > trimmed/${sample_name}.R2.knead_paired.gz 
+	gzip -cvf ${fastq1_kneaded_un} > trimmed/${sample_name}.R1.knead_unmatched.gz 
+	gzip -cvf ${fastq2_kneaded_un} > trimmed/${sample_name}.R2.knead_unmatched.gz 
+	mkdir trimmed_logs
+	more ${knead_log} > trimmed_logs/${sample_name}.kneaddata.log 
 	"""
 }
 
@@ -148,14 +165,14 @@ process fastqc_on_raw_files {
 	set sample_name, file(fastq1), file(fastq2) from raw_reads_to_fastqc_channel
 
 	output:
-    file("outputs/${fastq1.getBaseName()}_fastqc.{zip,html}") into raw_fastqc_R1
-    file("outputs/${fastq2.getBaseName()}_fastqc.{zip,html}") into raw_fastqc_R2
+    file("fastqc_raw/${fastq1.getSimpleName()}.R1_fastqc.{zip,html}") into raw_fastqc_R1
+    file("fastqc_raw/${fastq2.getSimpleName()}.R2_fastqc.{zip,html}") into raw_fastqc_R2
 
 	script:
 	"""
-	mkdir outputs
-	fastqc -t $task.cpus -o outputs -f fastq -q ${fastq1}
-	fastqc -t $task.cpus -o outputs -f fastq -q ${fastq2}
+	mkdir fastqc_raw
+	fastqc -t $task.cpus -o fastqc_raw -f fastq -q ${fastq1}
+	fastqc -t $task.cpus -o fastqc_raw -f fastq -q ${fastq2}
 	"""
 }
 
@@ -171,14 +188,14 @@ process fastqc_on_trimmed_files {
 	set sample_name, file(fastq1), file(fastq2) from post_knead_channel
 
 	output:
-    file("outputs2/${fastq1.getBaseName()}_fastqc.{zip,html}") into postknead_fastqc_R1
-    file("outputs2/${fastq2.getBaseName()}_fastqc.{zip,html}") into postknead_fastqc_R2
+    file("fastqc_trim/${fastq1.getBaseName()}_fastqc.{zip,html}") into postknead_fastqc_R1
+    file("fastqc_trim/${fastq2.getBaseName()}_fastqc.{zip,html}") into postknead_fastqc_R2
 
 	script:
 	"""
-	mkdir outputs2
-	fastqc -t $task.cpus -o outputs2 -f fastq -q ${fastq1}
-	fastqc -t $task.cpus -o outputs2 -f fastq -q ${fastq2}
+	mkdir fastqc_trim
+	fastqc -t $task.cpus -o fastqc_trim -f fastq -q ${fastq1}
+	fastqc -t $task.cpus -o fastqc_trim -f fastq -q ${fastq2}
 	"""
 }
 
