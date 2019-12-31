@@ -64,7 +64,7 @@ process knead {
 	mkdir reference
 	mkdir trimmed
 	tar -zxf ${refdb_targz} -C reference --strip-components 1
-	kneaddata --input ${fastq1} --input ${fastq2} --reference-db reference/demo_db --output trimmed
+	kneaddata --input ${fastq1} --input ${fastq2} --reference-db reference/ --output trimmed
 	mv trimmed/${fastq1.getSimpleName()}.R1.fq_kneaddata_paired_1.fastq trimmed/${sample_name}.R1.kneaddata_paired.fq
 	mv trimmed/${fastq1.getSimpleName()}.R1.fq_kneaddata_paired_2.fastq trimmed/${sample_name}.R2.kneaddata_paired.fq
 	mv trimmed/${fastq1.getSimpleName()}.R1.fq_kneaddata_unmatched_1.fastq trimmed/${sample_name}.R1.kneaddata_unmatched.fq
