@@ -1,12 +1,10 @@
-// demo.tar.gz contains bowtie2 database for testing read-decontamination
+// Human Reference database on S3 is hardcoded.
 params.tar = "s3://fh-pi-kublin-j-microbiome/read_only/REF/Homo_sapiens_hg37_and_human_contamination_Bowtie2_v0.1.tar.gz"
 
-// destination folder for all trimmed read
-// location to send outputs
-params.output_folder  = "s3://fh-pi-kublin-j-microbiome/read_only/CFPreTest/"
+// params.batchfile - specified at runtime (e.g., BATCHFILE=trial_econ_nextflow_cf_batch.csv)
 
-// batchfile
-//params.batchfile = "batchfile-testonly.csv"
+// params.output_folder - specified at runtime (e.g., OUTPUT_FOLDER=s3://fh-pi-kublin-j-microbiome/CF/trim_trial/2019_12_30_trim_trial/)
+	// destination folder for all trimmed read
 
 Channel.from(file(params.batchfile))
           .splitCsv(header: true, sep: ",")
