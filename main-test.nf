@@ -21,7 +21,6 @@
 	// [raw_fastqc_R1]
 	// [raw_fastqc_R2]
 	
-
 // THE OVERALL WORKFLOW:
 // 1. FASTQC the raw reads
 // [raw_reads_to_fastqc_channel] -> 
@@ -39,6 +38,8 @@
 
 // 3. MULTIQC mixes and collects items in channelsfrom fastqc pre and post knead
 	// [raw_fastqc_R1] AND [raw_fastqc_R2] AND [postknead_fastqc_R1] AND [postknead_fastqc_R2] -> {multiqc}
+
+
 
 // demo.tar.gz contains bowtie2 database for testing read-decontamination
 params.tar = "demo.tar.gz"
@@ -201,10 +202,3 @@ process multiqc {
     """
 
 }
-
-
-
-
-
-
-
