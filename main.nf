@@ -33,6 +33,7 @@ process knead {
 
 	container "quay.io/kmayerb/docker-knead@sha256:392c79e403f06d0ee8b884ad63d6654484a8935726a8ff524fa29f03d991cfdb"
 	
+	errorStrategy 'finish'
 	//publishDir params.output_folder
 
 	input:
@@ -50,7 +51,7 @@ process knead {
 	file("trimmed/${sample_name}.R1.kneaddata_unmatched.fq"),\
 	file("trimmed/${sample_name}.R2.kneaddata_unmatched.fq") into post_knead_channel_publication
 	
-	afterScript "rm *"
+	//afterScript "rm *"
 
 	// reference folder holds reference for read trim + decon
 	// results folder hold results of kneaddata
@@ -79,6 +80,8 @@ process compress {
 
 	container "ubuntu:20.04"
 
+	errorStrategy 'finish'
+
 	publishDir params.output_folder
 
 	input:
@@ -95,7 +98,7 @@ process compress {
 	file("trimmed/${sample_name}.R1.knead_unmatched.gz"),\
 	file("trimmed/${sample_name}.R2.knead_unmatched.gz") into compressed_channel
 
-	afterScript "rm *"
+	//afterScript "rm *"
 
 	script:
 	"""
@@ -113,6 +116,8 @@ process fastqc_on_raw_files {
 	container 'quay.io/kmayerb/mitochondria@sha256:54cd567a2eccc82a7134dfdbfde57e7d8dfe205a0ba8f62312ced8ff517f43bf'
 	
 	publishDir params.output_folder
+
+	errorStrategy 'finish'
 
 	input:
 	set sample_name, file(fastq1), file(fastq2) from raw_reads_to_fastqc_channel
